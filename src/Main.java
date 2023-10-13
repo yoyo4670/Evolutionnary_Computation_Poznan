@@ -58,6 +58,13 @@ public class Main {
         System.out.println("Worst solution greedy cycle : " + greedyCycleSolutions.get(greedyCycleSolutions.size() - 1).getCost());
         //Print the average solution
         System.out.println("Average solution greedy cycle : " + greedyCycleSolutions.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutions.size());
+
+
+        //Save the best solution for each method as a csv file
+        randomSolutions.get(0).saveSolution("random");
+        nearestNeighborSolutions.get(0).saveSolution("nearestNeighbor");
+        greedyCycleSolutions.get(0).saveSolution("greedyCycle");
+
     }
 
 
