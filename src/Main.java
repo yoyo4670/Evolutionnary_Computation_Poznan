@@ -9,16 +9,21 @@ import java.util.Comparator;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         //Extract the data and init the distance matrix and the weight list
-        node_extraction node_extraction = new node_extraction();
+        node_extraction node_extraction = new node_extraction("C:\\Users\\Yoann\\IdeaProjects\\Evolutionnary Computation\\src\\TSPD.csv");
         distance_matrix matrix = extraction.node_extraction.getMatrix();
         ArrayList<Integer> weight_list = node_extraction.getWeight_list();
 
 
         //Generate 200 random solutions
         ArrayList<Solution> randomSolutions = new ArrayList<Solution>();
+        //Initiate the timer to measure the execution time
+        long startTime = System.nanoTime();
         for (int i = 0; i < 200; i++) {
             randomSolutions.add(randomHamiltonianCycle(matrix, weight_list));
         }
+        //Print the execution time
+        long endTime = System.nanoTime();
+        System.out.println("Execution time random : " + (endTime - startTime) / 1000000 + " ms");
         //Sort the solutions
         randomSolutions.sort(Comparator.comparing(Solution::getCost));
         //Print the best solution
@@ -33,9 +38,14 @@ public class Main {
 
         //Generate nearest neighbor solutions for each node
         ArrayList<Solution> nearestNeighborSolutions = new ArrayList<Solution>();
+        //Initiate the timer to measure the execution time
+        long startTime2 = System.nanoTime();
         for (int i = 0; i < matrix.getMatrix().size(); i++) {
             nearestNeighborSolutions.add(nearestNeighbor(matrix, weight_list, i));
         }
+        //Print the execution time
+        long endTime2 = System.nanoTime();
+        System.out.println("Execution time nearest neighbor : " + (endTime2 - startTime2) / 1000000 + " ms");
         //Sort the solutions
         nearestNeighborSolutions.sort(Comparator.comparing(Solution::getCost));
         //Print the best solution
@@ -47,9 +57,14 @@ public class Main {
 
         //Generate greedy cycle solutions for each node
         ArrayList<Solution> greedyCycleSolutions = new ArrayList<Solution>();
+        //Initiate the timer to measure the execution time
+        long startTime3 = System.nanoTime();
         for (int i = 0; i < matrix.getMatrix().size(); i++) {
             greedyCycleSolutions.add(greedyCycle(matrix, weight_list, i));
         }
+        //Print the execution time
+        long endTime3 = System.nanoTime();
+        System.out.println("Execution time greedy cycle : " + (endTime3 - startTime3) / 1000000 + " ms");
         //Sort the solutions
         greedyCycleSolutions.sort(Comparator.comparing(Solution::getCost));
         //Print the best solution

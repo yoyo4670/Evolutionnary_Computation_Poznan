@@ -10,11 +10,11 @@ public class node_extraction {
     static String COMMA_DELIMITER = ";";
     static distance_matrix matrix = new distance_matrix(new ArrayList<ArrayList<Integer>>());
     static ArrayList<Integer> weight_list = new ArrayList<Integer>();
-    public node_extraction() throws FileNotFoundException {
+    public node_extraction(String pathname) throws FileNotFoundException {
 
         List<List<String>> records = new ArrayList<>();
         try (
-                Scanner scanner = new Scanner(new File("C:\\Users\\Yoann\\IdeaProjects\\Evolutionnary Computation\\src\\TSPA.csv"))) {
+                Scanner scanner = new Scanner(new File(pathname))) {
             while (scanner.hasNextLine()) {
                 records.add(getRecordFromLine(scanner.nextLine()));
             }
