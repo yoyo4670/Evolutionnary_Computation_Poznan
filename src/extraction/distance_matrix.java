@@ -21,4 +21,7 @@ public class distance_matrix {
         }
         matrix.add(newLine);
     }
+    public int getDistance(int a, int b){
+        return matrix.get(a).get(b);
+    }
 }

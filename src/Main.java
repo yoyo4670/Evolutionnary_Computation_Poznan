@@ -4,6 +4,7 @@ import extraction.distance_matrix;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 
 public class Main {
@@ -41,7 +42,7 @@ public class Main {
         //Initiate the timer to measure the execution time
         long startTime2 = System.nanoTime();
         for (int i = 0; i < matrix.getMatrix().size(); i++) {
-            nearestNeighborSolutions.add(nearestNeighbor(matrix, weight_list, i));
+            nearestNeighborSolutions.add(NearestNeighbor(matrix, weight_list, i));
         }
         //Print the execution time
         long endTime2 = System.nanoTime();
@@ -60,7 +61,7 @@ public class Main {
         //Initiate the timer to measure the execution time
         long startTime3 = System.nanoTime();
         for (int i = 0; i < matrix.getMatrix().size(); i++) {
-            greedyCycleSolutions.add(greedyCycle(matrix, weight_list, i));
+            greedyCycleSolutions.add(GreedyCycle(i, weight_list,matrix ));
         }
         //Print the execution time
         long endTime3 = System.nanoTime();
@@ -114,8 +115,8 @@ public class Main {
         return new Solution(cost,visitedNodes);
     }
 
-
-    public static Solution nearestNeighbor (distance_matrix matrix, ArrayList<Integer> weight_list,int startNode) {
+    //Nearest neighbor algorithm
+    public static Solution NearestNeighbor(distance_matrix matrix,ArrayList<Integer> weight_list,int startNode){
         //Number of nodes to visit, even the number if odd
         int numberNodeToVisit = matrix.getMatrix().size() / 2;
         if (numberNodeToVisit % 2 != 0) {
@@ -125,45 +126,9 @@ public class Main {
         ArrayList<Integer> visitedNodes = new ArrayList<Integer>();
         visitedNodes.add(startNode);
         int cost = weight_list.get(startNode);
-
+        //Random select a non visited vertex
         for (int i = 1; i < numberNodeToVisit; i++) {
-            //Select the nearest non visited node
-            int nearestNode = 0;
-            int nearestNodeCost = Integer.MAX_VALUE;
-            for (int j = 0; j < matrix.getMatrix().size(); j++) {
-                if (!visitedNodes.contains(j) && matrix.getMatrix().get(visitedNodes.get(i-1)).get(j) < nearestNodeCost) {
-                    nearestNode = j;
-                    nearestNodeCost = matrix.getMatrix().get(visitedNodes.get(i-1)).get(j);
-                }
-            }
-            visitedNodes.add(nearestNode);
-            //Add the cost of the path to the next node
-            if (i == 0) {
-                cost += weight_list.get(visitedNodes.get(i));
-            } else if (i == numberNodeToVisit - 1) {
-                cost += matrix.getMatrix().get(visitedNodes.get(i)).get(visitedNodes.get(0)) + weight_list.get(visitedNodes.get(i));
-            } else {
-                cost += matrix.getMatrix().get(visitedNodes.get(i - 1)).get(visitedNodes.get(i)) + weight_list.get(visitedNodes.get(i));
-            }
-
-        }
-       return new Solution(cost,visitedNodes);
-    }
-
-
-    public static Solution greedyCycle(distance_matrix matrix, ArrayList<Integer> weight_list,int startNode) {
-        //Number of nodes to visit, even the number if odd
-        int numberNodeToVisit = matrix.getMatrix().size() / 2;
-        if (numberNodeToVisit % 2 != 0) {
-            numberNodeToVisit++;
-        }
-        //List of visited nodes and cost of the path
-        ArrayList<Integer> visitedNodes = new ArrayList<Integer>();
-        visitedNodes.add(startNode);
-        int cost = weight_list.get(startNode);
-        //Random select a non visited node
-        for (int i = 1; i < numberNodeToVisit; i++) {
-            //Select the lowest cost non visited node
+            //Select the lowest cost non visited vertex
             int lowestCostNode = 0;
             int lowestCost = Integer.MAX_VALUE;
             for (int j = 0; j < matrix.getMatrix().size(); j++) {
@@ -173,7 +138,7 @@ public class Main {
                 }
             }
             visitedNodes.add(lowestCostNode);
-            //Add the cost of the path to the next node
+            //Add the cost of the path to the next vertex
             if (i == 0) {
                 cost += weight_list.get(visitedNodes.get(i));
             } else if (i == numberNodeToVisit - 1) {
@@ -185,4 +150,66 @@ public class Main {
         return new Solution(cost,visitedNodes);
     }
 
+
+
+    public static Solution GreedyCycle(int start, List<Integer> weights, distance_matrix matrix) {
+        int n = weights.size();
+        int result = 0;
+        List<Integer> costsCopy = new ArrayList<>(weights);
+        result += costsCopy.get(start);
+        costsCopy.set(start, Integer.MAX_VALUE);
+        List<Integer> nodes = new ArrayList<>();
+        nodes.add(start);
+
+        // First node
+        int[] near = new int[n];
+        for (int i = 0; i < n; i++) {
+            near[i] = matrix.getDistance(start, i) + costsCopy.get(i);
+            if (costsCopy.get(i) == Integer.MAX_VALUE) {
+                near[i] = Integer.MAX_VALUE;
+            }
+        }
+        int node = indexOfMin(near);
+        result += costsCopy.get(node);
+        result += matrix.getDistance(start, node) * 2;
+        nodes.add(node);
+        costsCopy.set(node, Integer.MAX_VALUE);
+
+        // Other nodes
+        for (int count = 0; count < (n + 1) / 2 - 2; count++) {
+            int bestCost = Integer.MAX_VALUE;
+            int previousNode = 0;
+
+            for (int i = 0; i < nodes.size(); i++) {
+                for (int j = 0; j < n; j++) {
+                    if (costsCopy.get(j) != Integer.MAX_VALUE) {
+                        int newCost = matrix.getDistance(nodes.get(i), j)
+                                + costsCopy.get(j) + matrix.getDistance(j, nodes.get((i + 1) % nodes.size()))
+                                - matrix.getDistance(nodes.get(i), nodes.get((i + 1) % nodes.size()));
+
+                        if (newCost < bestCost) {
+                            bestCost = newCost;
+                            previousNode = i;
+                            node = j;
+                        }
+                    }
+                }
+            }
+
+            result += bestCost;
+            costsCopy.set(node, Integer.MAX_VALUE);
+            nodes.add(previousNode + 1, node);
+        }
+
+        return new Solution(result, new ArrayList<>(nodes));
+    }
+    private static int indexOfMin(int[] array) {
+        int minIndex = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] < array[minIndex]) {
+                minIndex = i;
+            }
+        }
+        return minIndex;
+    }
 }
