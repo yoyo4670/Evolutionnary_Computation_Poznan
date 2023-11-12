@@ -1,11 +1,11 @@
 import extraction.node_extraction;
 import extraction.distance_matrix;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+
+import static java.util.Collections.copy;
 
 
 public class Main {
@@ -16,125 +16,125 @@ public class Main {
         ArrayList<Integer> weight_list = node_extraction.getWeight_list();
 
 
-        //Generate 200 random solutions
-        ArrayList<Solution> randomSolutions = new ArrayList<Solution>();
-        //Initiate the timer to measure the execution time
-        long startTime = System.nanoTime();
-        for (int i = 0; i < 200; i++) {
-            randomSolutions.add(randomHamiltonianCycle(matrix, weight_list));
-        }
-        //Print the execution time
-        long endTime = System.nanoTime();
-        System.out.println("Execution time random : " + (endTime - startTime) / 1000000 + " ms");
-        //Sort the solutions
-        randomSolutions.sort(Comparator.comparing(Solution::getCost));
-        //Print the best solution
-        System.out.println("Best solution random : " + randomSolutions.get(0).getCost());
-        //Print the worst solution
-        System.out.println("Worst solution random : " + randomSolutions.get(randomSolutions.size() - 1).getCost());
-        //Print the average solution
-        System.out.println("Average solution random : " + randomSolutions.stream().mapToInt(Solution::getCost).sum() / randomSolutions.size());
-
-//
-//
-//
-        //Generate nearest neighbor solutions for each node
-        ArrayList<Solution> nearestNeighborSolutions = new ArrayList<Solution>();
-        //Initiate the timer to measure the execution time
-        long startTime2 = System.nanoTime();
-        for (int i = 0; i < matrix.getMatrix().size(); i++) {
-            nearestNeighborSolutions.add(NearestNeighbor(matrix, weight_list, i));
-        }
-        //Print the execution time
-        long endTime2 = System.nanoTime();
-        System.out.println("Execution time nearest neighbor : " + (endTime2 - startTime2) / 1000000 + " ms");
-        //Sort the solutions
-        nearestNeighborSolutions.sort(Comparator.comparing(Solution::getCost));
-        //Print the best solution
-        System.out.println("Best solution nearest neighbor : " + nearestNeighborSolutions.get(0).getCost());
-        //Print the worst solution
-        System.out.println("Worst solution nearest neighbor : " + nearestNeighborSolutions.get(nearestNeighborSolutions.size() - 1).getCost());
-        //Print the average solution
-        System.out.println("Average solution nearest neighbor : " + nearestNeighborSolutions.stream().mapToInt(Solution::getCost).sum() / nearestNeighborSolutions.size());
-
-        //Generate greedy cycle solutions for each node
-        ArrayList<Solution> greedyCycleSolutions = new ArrayList<Solution>();
-        //Initiate the timer to measure the execution time
-        long startTime3 = System.nanoTime();
-        for (int i = 0; i < matrix.getMatrix().size(); i++) {
-            greedyCycleSolutions.add(GreedyCycle(i, weight_list,matrix ));
-        }
-        //Print the execution time
-        long endTime3 = System.nanoTime();
-        System.out.println("Execution time greedy cycle : " + (endTime3 - startTime3) / 1000000 + " ms");
-        //Sort the solutions
-        greedyCycleSolutions.sort(Comparator.comparing(Solution::getCost));
-        //Print the best solution
-        System.out.println("Best solution greedy cycle : " + greedyCycleSolutions.get(0).getCost());
-        //Print the worst solution
-        System.out.println("Worst solution greedy cycle : " + greedyCycleSolutions.get(greedyCycleSolutions.size() - 1).getCost());
-        //Print the average solution
-        System.out.println("Average solution greedy cycle : " + greedyCycleSolutions.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutions.size());
-
-        //Generate greedy cycle solutions for each node
-        ArrayList<Solution> greedyCycleSolutionsRegret = new ArrayList<Solution>();
-        //Initiate the timer to measure the execution time
-        long startTime4 = System.nanoTime();
-        for (int i = 0; i < matrix.getMatrix().size(); i++) {
-            greedyCycleSolutionsRegret.add(Greedy2Regret(i, weight_list,matrix ));
-        }
-        //Print the execution time
-        long endTime4 = System.nanoTime();
-        System.out.println("Execution time greedy cycle 2regret : " + (endTime4 - startTime4) / 1000000 + " ms");
-        //Sort the solutions
-        greedyCycleSolutionsRegret.sort(Comparator.comparing(Solution::getCost));
-        //Print the best solution
-        System.out.println("Best solution greedy cycle 2regret : " + greedyCycleSolutionsRegret.get(0).getCost());
-        //Print the worst solution
-        System.out.println("Worst solution greedy cycle 2regret : " + greedyCycleSolutionsRegret.get(greedyCycleSolutionsRegret.size() - 1).getCost());
-        //Print the average solution
-        System.out.println("Average solution greedy cycle 2regret : " + greedyCycleSolutionsRegret.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutionsRegret.size());
-
-
-        //Generate greedy cycle solutions for each node
-        ArrayList<Solution> greedyCycleSolutionsSum2Regret = new ArrayList<Solution>();
-        //Initiate the timer to measure the execution time
-        long startTime5 = System.nanoTime();
-        for (int i = 0; i < matrix.getMatrix().size(); i++) {
-            greedyCycleSolutionsSum2Regret.add(GreedySum2Regret(i, weight_list,matrix,1,1 ));
-        }
-        //Print the execution time
-        long endTime5 = System.nanoTime();
-        System.out.println("Execution time greedy cycle sum 2regret : " + (endTime5 - startTime5) / 1000000 + " ms");
-        //Sort the solutions
-        greedyCycleSolutionsSum2Regret.sort(Comparator.comparing(Solution::getCost));
-        //Print the best solution
-        System.out.println("Best solution greedy cycle sum 2regret : " + greedyCycleSolutionsSum2Regret.get(0).getCost());
-        //Print the worst solution
-        System.out.println("Worst solution greedy cycle sum 2regret : " + greedyCycleSolutionsSum2Regret.get(greedyCycleSolutionsSum2Regret.size() - 1).getCost());
-        //Print the average solution
-        System.out.println("Average solution greedy cycle sum 2regret : " + greedyCycleSolutionsSum2Regret.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutionsSum2Regret.size());
-
-
-//        //Generate 200 local search solutions from random starting solutions
-//        ArrayList<Solution> greedyLocalSearchRandomNodesExchangeSolutions = new ArrayList<Solution>();
+//        //Generate 200 random solutions
+//        ArrayList<Solution> randomSolutions = new ArrayList<Solution>();
 //        //Initiate the timer to measure the execution time
-//        long startTime6 = System.nanoTime();
-//        for(int i=0;i<200;i++){
-//            System.out.println(i);
-//            greedyLocalSearchRandomNodesExchangeSolutions.add(GreedyLocalSearch(matrix,weight_list,randomHamiltonianCycle(matrix, weight_list),2));
+//        long startTime = System.nanoTime();
+//        for (int i = 0; i < 200; i++) {
+//            randomSolutions.add(randomHamiltonianCycle(matrix, weight_list));
 //        }
 //        //Print the execution time
-//        long endTime6 = System.nanoTime();
-//        System.out.println("Execution time local search : " + (endTime6 - startTime6) / 1000000 + " ms");
+//        long endTime = System.nanoTime();
+//        System.out.println("Execution time random : " + (endTime - startTime) / 1000000 + " ms");
 //        //Sort the solutions
-//        greedyLocalSearchRandomNodesExchangeSolutions.sort(Comparator.comparing(Solution::getCost));
+//        randomSolutions.sort(Comparator.comparing(Solution::getCost));
 //        //Print the best solution
-//        System.out.println("Best solution local search : " + greedyLocalSearchRandomNodesExchangeSolutions.get(0).getCost());
+//        System.out.println("Best solution random : " + randomSolutions.get(0).getCost());
 //        //Print the worst solution
-//        System.out.println("Worst solution local search : " + greedyLocalSearchRandomNodesExchangeSolutions.get(greedyLocalSearchRandomNodesExchangeSolutions.size() - 1).getCost());
+//        System.out.println("Worst solution random : " + randomSolutions.get(randomSolutions.size() - 1).getCost());
 //        //Print the average solution
-//        System.out.println("Average solution local search : " + greedyLocalSearchRandomNodesExchangeSolutions.stream().mapToInt(Solution::getCost).sum() / greedyLocalSearchRandomNodesExchangeSolutions.size());
+//        System.out.println("Average solution random : " + randomSolutions.stream().mapToInt(Solution::getCost).sum() / randomSolutions.size());
+//
+////
+////
+////
+//        //Generate nearest neighbor solutions for each node
+//        ArrayList<Solution> nearestNeighborSolutions = new ArrayList<Solution>();
+//        //Initiate the timer to measure the execution time
+//        long startTime2 = System.nanoTime();
+//        for (int i = 0; i < matrix.getMatrix().size(); i++) {
+//            nearestNeighborSolutions.add(NearestNeighbor(matrix, weight_list, i));
+//        }
+//        //Print the execution time
+//        long endTime2 = System.nanoTime();
+//        System.out.println("Execution time nearest neighbor : " + (endTime2 - startTime2) / 1000000 + " ms");
+//        //Sort the solutions
+//        nearestNeighborSolutions.sort(Comparator.comparing(Solution::getCost));
+//        //Print the best solution
+//        System.out.println("Best solution nearest neighbor : " + nearestNeighborSolutions.get(0).getCost());
+//        //Print the worst solution
+//        System.out.println("Worst solution nearest neighbor : " + nearestNeighborSolutions.get(nearestNeighborSolutions.size() - 1).getCost());
+//        //Print the average solution
+//        System.out.println("Average solution nearest neighbor : " + nearestNeighborSolutions.stream().mapToInt(Solution::getCost).sum() / nearestNeighborSolutions.size());
+//
+//        //Generate greedy cycle solutions for each node
+//        ArrayList<Solution> greedyCycleSolutions = new ArrayList<Solution>();
+//        //Initiate the timer to measure the execution time
+//        long startTime3 = System.nanoTime();
+//        for (int i = 0; i < matrix.getMatrix().size(); i++) {
+//            greedyCycleSolutions.add(GreedyCycle(i, weight_list,matrix ));
+//        }
+//        //Print the execution time
+//        long endTime3 = System.nanoTime();
+//        System.out.println("Execution time greedy cycle : " + (endTime3 - startTime3) / 1000000 + " ms");
+//        //Sort the solutions
+//        greedyCycleSolutions.sort(Comparator.comparing(Solution::getCost));
+//        //Print the best solution
+//        System.out.println("Best solution greedy cycle : " + greedyCycleSolutions.get(0).getCost());
+//        //Print the worst solution
+//        System.out.println("Worst solution greedy cycle : " + greedyCycleSolutions.get(greedyCycleSolutions.size() - 1).getCost());
+//        //Print the average solution
+//        System.out.println("Average solution greedy cycle : " + greedyCycleSolutions.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutions.size());
+//
+//        //Generate greedy cycle solutions for each node
+//        ArrayList<Solution> greedyCycleSolutionsRegret = new ArrayList<Solution>();
+//        //Initiate the timer to measure the execution time
+//        long startTime4 = System.nanoTime();
+//        for (int i = 0; i < matrix.getMatrix().size(); i++) {
+//            greedyCycleSolutionsRegret.add(Greedy2Regret(i, weight_list,matrix ));
+//        }
+//        //Print the execution time
+//        long endTime4 = System.nanoTime();
+//        System.out.println("Execution time greedy cycle 2regret : " + (endTime4 - startTime4) / 1000000 + " ms");
+//        //Sort the solutions
+//        greedyCycleSolutionsRegret.sort(Comparator.comparing(Solution::getCost));
+//        //Print the best solution
+//        System.out.println("Best solution greedy cycle 2regret : " + greedyCycleSolutionsRegret.get(0).getCost());
+//        //Print the worst solution
+//        System.out.println("Worst solution greedy cycle 2regret : " + greedyCycleSolutionsRegret.get(greedyCycleSolutionsRegret.size() - 1).getCost());
+//        //Print the average solution
+//        System.out.println("Average solution greedy cycle 2regret : " + greedyCycleSolutionsRegret.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutionsRegret.size());
+//
+//
+//        //Generate greedy cycle solutions for each node
+//        ArrayList<Solution> greedyCycleSolutionsSum2Regret = new ArrayList<Solution>();
+//        //Initiate the timer to measure the execution time
+//        long startTime5 = System.nanoTime();
+//        for (int i = 0; i < matrix.getMatrix().size(); i++) {
+//            greedyCycleSolutionsSum2Regret.add(GreedySum2Regret(i, weight_list,matrix,1,1 ));
+//        }
+//        //Print the execution time
+//        long endTime5 = System.nanoTime();
+//        System.out.println("Execution time greedy cycle sum 2regret : " + (endTime5 - startTime5) / 1000000 + " ms");
+//        //Sort the solutions
+//        greedyCycleSolutionsSum2Regret.sort(Comparator.comparing(Solution::getCost));
+//        //Print the best solution
+//        System.out.println("Best solution greedy cycle sum 2regret : " + greedyCycleSolutionsSum2Regret.get(0).getCost());
+//        //Print the worst solution
+//        System.out.println("Worst solution greedy cycle sum 2regret : " + greedyCycleSolutionsSum2Regret.get(greedyCycleSolutionsSum2Regret.size() - 1).getCost());
+//        //Print the average solution
+//        System.out.println("Average solution greedy cycle sum 2regret : " + greedyCycleSolutionsSum2Regret.stream().mapToInt(Solution::getCost).sum() / greedyCycleSolutionsSum2Regret.size());
+
+
+        //Generate 200 local search solutions from random starting solutions
+        ArrayList<Solution> greedyLocalSearchRandomNodesExchangeSolutions = new ArrayList<Solution>();
+        //Initiate the timer to measure the execution time
+        long startTime6 = System.nanoTime();
+        for(int i=0;i<200;i++){
+            System.out.println(i);
+            greedyLocalSearchRandomNodesExchangeSolutions.add(SteepestLocalSearch(matrix,weight_list,randomHamiltonianCycle(matrix, weight_list),2));
+        }
+        //Print the execution time
+        long endTime6 = System.nanoTime();
+        System.out.println("Execution time local search : " + (endTime6 - startTime6) / 1000000 + " ms");
+        //Sort the solutions
+        greedyLocalSearchRandomNodesExchangeSolutions.sort(Comparator.comparing(Solution::getCost));
+        //Print the best solution
+        System.out.println("Best solution local search : " + greedyLocalSearchRandomNodesExchangeSolutions.get(0).getCost());
+        //Print the worst solution
+        System.out.println("Worst solution local search : " + greedyLocalSearchRandomNodesExchangeSolutions.get(greedyLocalSearchRandomNodesExchangeSolutions.size() - 1).getCost());
+        //Print the average solution
+        System.out.println("Average solution local search : " + greedyLocalSearchRandomNodesExchangeSolutions.stream().mapToInt(Solution::getCost).sum() / greedyLocalSearchRandomNodesExchangeSolutions.size());
 
 //        //Generate 200 local search solutions from sum criterion regret starting solutions
 //        ArrayList<Solution> greedyLocalSearchBestStartNodesExchangeSolutions = new ArrayList<Solution>();
@@ -157,6 +157,25 @@ public class Main {
 //        System.out.println("Average solution local search sum 2regret : " + greedyLocalSearchBestStartNodesExchangeSolutions.stream().mapToInt(Solution::getCost).sum() / greedyLocalSearchBestStartNodesExchangeSolutions.size());
 //
 
+        //Generate 200 local search solutions from random starting solutions
+        ArrayList<Solution> CanditatSteepestLocalSearch = new ArrayList<Solution>();
+        //Initiate the timer to measure the execution time
+        long startTime8 = System.nanoTime();
+        for(int i=0;i<200;i++){
+            //System.out.println(i);
+            CanditatSteepestLocalSearch.add(SteepestLocalSearchCandidatMove(matrix,weight_list,randomHamiltonianCycle(matrix, weight_list),5));
+        }
+        //Print the execution time
+        long endTime8 = System.nanoTime();
+        System.out.println("Execution time local search : " + (endTime8 - startTime8) / 1000000 + " ms");
+        //Sort the solutions
+        CanditatSteepestLocalSearch.sort(Comparator.comparing(Solution::getCost));
+        //Print the best solution
+        System.out.println("Best solution local search : " + CanditatSteepestLocalSearch.get(0).getCost());
+        //Print the worst solution
+        System.out.println("Worst solution local search : " + CanditatSteepestLocalSearch.get(CanditatSteepestLocalSearch.size() - 1).getCost());
+        //Print the average solution
+        System.out.println("Average solution local search : " + CanditatSteepestLocalSearch.stream().mapToInt(Solution::getCost).sum() / CanditatSteepestLocalSearch.size());
 
 
 //        //Save the best solution for each method as a csv file
@@ -165,8 +184,13 @@ public class Main {
 //        greedyCycleSolutions.get(0).saveSolution("greedyCycle");
 //        greedyCycleSolutionsRegret.get(0).saveSolution("greedyCycleRegret");
 //        greedyCycleSolutionsSum2Regret.get(0).saveSolution("greedyCycleSum2Regret");
-//        greedyLocalSearchRandomNodesExchangeSolutions.get(0).saveSolution("greedyLocalSearchRandomNodesExchange");
+        greedyLocalSearchRandomNodesExchangeSolutions.get(0).saveSolution("greedyLocalSearchRandomNodesExchange");
 //        greedyLocalSearchBestStartNodesExchangeSolutions.get(0).saveSolution("greedyLocalSearchBestStartNodesExchange");
+        CanditatSteepestLocalSearch.get(0).saveSolution("CanditatSteepestLocalSearch");
+
+
+
+
 
     }
 
@@ -730,4 +754,223 @@ public class Main {
             }
         }
     }
+
+    public static ArrayList<Move> InterRouteExchangeCanditat(Solution solution, distance_matrix matrix, List<Integer> weights,CandidatMove candidatMoves){
+        //List of moves
+        ArrayList<Move> moves = new ArrayList<Move>();
+        for(int i=0;i<solution.getVisitedNodes().size();i++){
+            ArrayList<Integer> endNodesForEdges = candidatMoves.getCandidatMoves().get(i);
+            for(int j=0;j<endNodesForEdges.size();j++){
+                if(!solution.getVisitedNodes().contains(endNodesForEdges.get(j))) {
+                    //We want that the edges of i and j is in the solution,
+                    //So we need to perform exchange between the i-1 node and the j node or the i+1 node and the j node
+
+                    //First exchange of i-1 with j
+                    int deltaCost1 = 0;
+                    if (i == 0) {
+                        deltaCost1 = deltaCost1 - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 1))
+                                - matrix.getDistance(solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 1), solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 2))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 2))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i))
+                                + weights.get(endNodesForEdges.get(j)) - weights.get(solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 1));
+                    } else if(i==1) {
+                        deltaCost1 = deltaCost1 - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get(0))
+                                - matrix.getDistance(solution.getVisitedNodes().get(0), solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 1))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(solution.getVisitedNodes().size() - 1))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i))
+                                + weights.get(endNodesForEdges.get(j)) - weights.get(solution.getVisitedNodes().get(0));
+                    }else{
+                        deltaCost1 = deltaCost1 - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get(i-1))
+                                - matrix.getDistance(solution.getVisitedNodes().get(i-1), solution.getVisitedNodes().get(i - 2))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i-2))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i))
+                                + weights.get(endNodesForEdges.get(j)) - weights.get(solution.getVisitedNodes().get(i-1));
+                    }
+
+                    //Second exchange of i+1 with j
+                    int deltaCost2 = 0;
+                    if(i==solution.getVisitedNodes().size()-1){
+                        deltaCost2 = deltaCost2 - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get(0))
+                                - matrix.getDistance(solution.getVisitedNodes().get(0), solution.getVisitedNodes().get(1))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(1))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i))
+                                + weights.get(endNodesForEdges.get(j)) - weights.get(solution.getVisitedNodes().get(0));
+                    }else if(i==solution.getVisitedNodes().size()-2){
+                        deltaCost2 = deltaCost2 - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get(i+1))
+                                - matrix.getDistance(solution.getVisitedNodes().get(i+1), solution.getVisitedNodes().get(0))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(0))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i))
+                                + weights.get(endNodesForEdges.get(j)) - weights.get(solution.getVisitedNodes().get(i+1));
+                    }else{
+                        deltaCost2 = deltaCost2 - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get(i+1))
+                                - matrix.getDistance(solution.getVisitedNodes().get(i+1), solution.getVisitedNodes().get(i + 2))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i+2))
+                                + matrix.getDistance(endNodesForEdges.get(j), solution.getVisitedNodes().get(i))
+                                + weights.get(endNodesForEdges.get(j)) - weights.get(solution.getVisitedNodes().get(i+1));
+                    }
+                    //Add the move to the list of moves
+                    moves.add(new Move((i-1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size(), endNodesForEdges.get(j), deltaCost1, 3));
+                    moves.add(new Move((i+1)% solution.getVisitedNodes().size(), endNodesForEdges.get(j), deltaCost2, 3));
+                }
+
+            }
+        }
+        return moves;
+    }
+
+
+    public static ArrayList<Move> EdgesExchangesCandidat(Solution solution,distance_matrix matrix,List<Integer> weights,CandidatMove candidatMoves) {
+        //List of moves
+        ArrayList<Move> moves = new ArrayList<Move>();
+        //For each node in the solution
+        for (int i = 0; i < solution.getVisitedNodes().size()-1; i++) {
+            //For each node in the solution
+            ArrayList<Integer> endNodesForEdges = candidatMoves.getCandidatMoves().get(i);
+            for (int k = 0;k<endNodesForEdges.size();k++){
+                if(solution.getVisitedNodes().get(i)!=endNodesForEdges.get(k)){
+                    if (solution.getVisitedNodes().contains(endNodesForEdges.get(k))) {
+                        int j = solution.getVisitedNodes().indexOf(endNodesForEdges.get(k));
+                        // j -> i -> i+1 -> j+1
+                        int deltaCost1 = 0;
+                        deltaCost1 = deltaCost1 - matrix.getDistance(solution.getVisitedNodes().get(j), solution.getVisitedNodes().get((j + 1) % solution.getVisitedNodes().size()))
+                                - matrix.getDistance(solution.getVisitedNodes().get(i), solution.getVisitedNodes().get((i + 1) % solution.getVisitedNodes().size()))
+                                + matrix.getDistance(solution.getVisitedNodes().get(j), solution.getVisitedNodes().get(i))
+                                + matrix.getDistance(solution.getVisitedNodes().get((j + 1) % solution.getVisitedNodes().size()), solution.getVisitedNodes().get((i + 1) % solution.getVisitedNodes().size()));
+
+                        // j-1 -> i-1 -> j -> i
+                        int deltaCost2 = 0;
+                        deltaCost2 = deltaCost2 - matrix.getDistance(solution.getVisitedNodes().get((j - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size()), solution.getVisitedNodes().get(j))
+                                - matrix.getDistance(solution.getVisitedNodes().get((i - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size()), solution.getVisitedNodes().get(i))
+                                + matrix.getDistance(solution.getVisitedNodes().get((j - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size()), solution.getVisitedNodes().get((i - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size()))
+                                + matrix.getDistance(solution.getVisitedNodes().get(j), solution.getVisitedNodes().get(i));
+
+                        //Add the move to the list of moves
+                        if(i>j){
+                            moves.add(new Move(i, (j + 1) % solution.getVisitedNodes().size(), deltaCost1, 2));
+                            moves.add(new Move((i - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size(), j, deltaCost2, 2));
+                        }else {
+                            moves.add(new Move(j, (i + 1) % solution.getVisitedNodes().size(), deltaCost1, 2));
+                            moves.add(new Move((j - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size(), i, deltaCost2, 2));
+                        }
+                    }
+                }
+            }
+        }
+        return moves;
+    }
+
+    public static CandidatMove CanditatMoves(Solution solution, distance_matrix matrix, List<Integer> weights,int nbCandidatMoves){
+        //List of candidate moves
+        CandidatMove candidatMove = new CandidatMove();
+
+        for(int i=0;i<solution.getVisitedNodes().size();i++) {
+            Integer[] bestNodesNotInSolution = new Integer[nbCandidatMoves];
+            Integer[] bestNodeCostNotInSolution = new Integer[nbCandidatMoves];
+            Integer[] bestNodesInSolution = new Integer[nbCandidatMoves];
+            Integer[] bestNodeCostInSolution = new Integer[nbCandidatMoves];
+
+            for (int j = 0; j < matrix.getMatrix().size(); j++) {
+                if (!solution.getVisitedNodes().contains(j)) {
+                    for (int k = 0; k < nbCandidatMoves; k++) {
+                        if (bestNodeCostNotInSolution[k] == null || matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j) < bestNodeCostNotInSolution[k]) {
+                            bestNodeCostNotInSolution[k] = matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j);
+                            bestNodesNotInSolution[k] = j;
+                            break;
+                        }
+                    }
+                } else if (j != solution.getVisitedNodes().get(i) && j != solution.getVisitedNodes().get((i + 1) % solution.getVisitedNodes().size()) && j != solution.getVisitedNodes().get((i - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size())) {
+                    for (int k = 0; k < nbCandidatMoves; k++) {
+                        if (bestNodeCostInSolution[k] == null || matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j) < bestNodeCostInSolution[k]) {
+                            bestNodeCostInSolution[k] = matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j);
+                            bestNodesInSolution[k] = j;
+                            break;
+                        }
+                    }
+                }
+            }
+            //Merge the two tables of nodes into an Arraylist
+            ArrayList<Integer[]> bestNodes = new ArrayList<Integer[]>();
+            for (int k = 0; k < nbCandidatMoves; k++) {
+                bestNodes.add(new Integer[]{bestNodesNotInSolution[k], bestNodeCostNotInSolution[k]});
+                bestNodes.add(new Integer[]{bestNodesInSolution[k], bestNodeCostInSolution[k]});
+            }
+            //Sort the list of nodes by cost
+            Collections.sort(bestNodes, new Comparator<Integer[]>() {
+                @Override
+                public int compare(Integer[] o1, Integer[] o2) {
+                    return o1[1].compareTo(o2[1]);
+                }
+            });
+            //Only keep the nbCandidatMoves best nodes
+            for (int k = 0; k < nbCandidatMoves; k++) {
+                bestNodes.remove(bestNodes.size() - 1);
+            }
+            //Add the nodes to the list of candidate moves
+            ArrayList<Integer> bestNodesArray = new ArrayList<Integer>();
+            for (int k = 0; k < nbCandidatMoves; k++) {
+                bestNodesArray.add(bestNodes.get(k)[0]);
+            }
+            candidatMove.addCandidatMove(i, bestNodesArray);
+
+        }
+        return candidatMove;
+    }
+
+
+
+    public static Solution SteepestLocalSearchCandidatMove(distance_matrix matrix, List<Integer> weights, Solution initialSolution,int nbCandidatMoves){
+
+        //Copy the initial solution
+        Solution bestSolution = new Solution(initialSolution.getCost(), initialSolution.getVisitedNodes());
+        //Candidate moves
+        CandidatMove candidatMoves = CanditatMoves(bestSolution, matrix, weights,nbCandidatMoves);
+
+        //List of moves to all neighboring solutions
+        ArrayList<Move> moves = new ArrayList<Move>();
+        //Get the intra route exchange moves
+        moves = EdgesExchangesCandidat(bestSolution, matrix, weights,candidatMoves);
+        //Get the inter route exchange moves
+        ArrayList<Move> moves2 = InterRouteExchangeCanditat(bestSolution, matrix, weights,candidatMoves);
+        //Add the inter route exchange moves to the list of moves
+        moves.addAll(moves2);
+
+        while (true){
+            //System.out.println(bestSolution.getCost());
+            Move bestMove = new Move(0,0,Integer.MAX_VALUE,0);
+            for(int i=0;i<moves.size();i++){
+                if(moves.get(i).getCost()<bestMove.getCost()){
+                    bestMove = moves.get(i);
+                }
+            }
+            if(bestMove.getCost()<0){
+                //Construct the new solution with the move
+                Solution newSolution = new Solution(bestSolution.getCost() + bestMove.getCost(), bestSolution.getVisitedNodes());
+                if (bestMove.getType() == 2) {
+                    if(Math.max(bestMove.getI() + 1, bestMove.getJ() +1) == bestSolution.getVisitedNodes().size()){
+                        Collections.reverse(newSolution.getVisitedNodes().subList(0, Math.min(bestMove.getI(), bestMove.getJ())));
+                    }else {
+                        Collections.reverse(newSolution.getVisitedNodes().subList(Math.min(bestMove.getI(), bestMove.getJ()), Math.max(bestMove.getI() + 1, bestMove.getJ() + 1)));
+                    }
+                } else if (bestMove.getType() == 3) {
+                    newSolution.getVisitedNodes().remove(bestMove.getI());
+                    newSolution.getVisitedNodes().add(bestMove.getI(), bestMove.getJ());
+                }
+                //Update the neighbors
+                candidatMoves = CanditatMoves(bestSolution, matrix, weights,nbCandidatMoves);
+                moves = EdgesExchangesCandidat(bestSolution, matrix, weights,candidatMoves);
+                moves2 = InterRouteExchangeCanditat(bestSolution, matrix, weights,candidatMoves);
+                moves.addAll(moves2);
+                //Update the best solution
+                bestSolution = newSolution;
+
+            }else{
+                //If the best move is not improving the solution, stop the algorithm
+                break;
+            }
+
+        }
+        return bestSolution;
+    }
+
+
 }
