@@ -31,3 +31,16 @@ bin/
 /greedyCycle.csv
 /nearestNeighbor.csv
 /random.csv
+/CanditatSteepestLocalSearch.csv
+/greedyCycleRegret.csv
+/greedyCycleSum2Regret.csv
+/greedyLocalSearchBestStartNodesExchange.csv
+/greedyLocalSearchRandomNodesExchange.csv
+/.idea/misc.xml
+/.idea/modules.xml
+/output.png
+/randomTest.csv
+/src/TSPB.csv
+/src/TSPC.csv
+/src/TSPD.csv
+/.idea/vcs.xml

@@ -157,25 +157,25 @@ public class Main {
 //        System.out.println("Average solution local search sum 2regret : " + greedyLocalSearchBestStartNodesExchangeSolutions.stream().mapToInt(Solution::getCost).sum() / greedyLocalSearchBestStartNodesExchangeSolutions.size());
 //
 
-        //Generate 200 local search solutions from random starting solutions
-        ArrayList<Solution> CanditatSteepestLocalSearch = new ArrayList<Solution>();
-        //Initiate the timer to measure the execution time
-        long startTime8 = System.nanoTime();
-        for(int i=0;i<200;i++){
-            //System.out.println(i);
-            CanditatSteepestLocalSearch.add(SteepestLocalSearchCandidatMove(matrix,weight_list,randomHamiltonianCycle(matrix, weight_list),5));
-        }
-        //Print the execution time
-        long endTime8 = System.nanoTime();
-        System.out.println("Execution time local search : " + (endTime8 - startTime8) / 1000000 + " ms");
-        //Sort the solutions
-        CanditatSteepestLocalSearch.sort(Comparator.comparing(Solution::getCost));
-        //Print the best solution
-        System.out.println("Best solution local search : " + CanditatSteepestLocalSearch.get(0).getCost());
-        //Print the worst solution
-        System.out.println("Worst solution local search : " + CanditatSteepestLocalSearch.get(CanditatSteepestLocalSearch.size() - 1).getCost());
-        //Print the average solution
-        System.out.println("Average solution local search : " + CanditatSteepestLocalSearch.stream().mapToInt(Solution::getCost).sum() / CanditatSteepestLocalSearch.size());
+//        //Generate 200 local search solutions from random starting solutions
+//        ArrayList<Solution> CanditatSteepestLocalSearch = new ArrayList<Solution>();
+//        //Initiate the timer to measure the execution time
+//        long startTime8 = System.nanoTime();
+//        for(int i=0;i<200;i++){
+//            //System.out.println(i);
+//            CanditatSteepestLocalSearch.add(SteepestLocalSearchCandidatMove(matrix,weight_list,randomHamiltonianCycle(matrix, weight_list),10));
+//        }
+//        //Print the execution time
+//        long endTime8 = System.nanoTime();
+//        System.out.println("Execution time local search : " + (endTime8 - startTime8) / 1000000 + " ms");
+//        //Sort the solutions
+//        CanditatSteepestLocalSearch.sort(Comparator.comparing(Solution::getCost));
+//        //Print the best solution
+//        System.out.println("Best solution local search : " + CanditatSteepestLocalSearch.get(0).getCost());
+//        //Print the worst solution
+//        System.out.println("Worst solution local search : " + CanditatSteepestLocalSearch.get(CanditatSteepestLocalSearch.size() - 1).getCost());
+//        //Print the average solution
+//        System.out.println("Average solution local search : " + CanditatSteepestLocalSearch.stream().mapToInt(Solution::getCost).sum() / CanditatSteepestLocalSearch.size());
 
 
 //        //Save the best solution for each method as a csv file
@@ -186,7 +186,7 @@ public class Main {
 //        greedyCycleSolutionsSum2Regret.get(0).saveSolution("greedyCycleSum2Regret");
         greedyLocalSearchRandomNodesExchangeSolutions.get(0).saveSolution("greedyLocalSearchRandomNodesExchange");
 //        greedyLocalSearchBestStartNodesExchangeSolutions.get(0).saveSolution("greedyLocalSearchBestStartNodesExchange");
-        CanditatSteepestLocalSearch.get(0).saveSolution("CanditatSteepestLocalSearch");
+//        CanditatSteepestLocalSearch.get(0).saveSolution("CanditatSteepestLocalSearch");
 
 
 
@@ -830,6 +830,9 @@ public class Main {
                 if(solution.getVisitedNodes().get(i)!=endNodesForEdges.get(k)){
                     if (solution.getVisitedNodes().contains(endNodesForEdges.get(k))) {
                         int j = solution.getVisitedNodes().indexOf(endNodesForEdges.get(k));
+                        if(i==j || i==(j+1)%solution.getVisitedNodes().size() || i== (j-1+solution.getVisitedNodes().size())%solution.getVisitedNodes().size() || i==(j+2)%solution.getVisitedNodes().size() || i==(j-2+solution.getVisitedNodes().size())%solution.getVisitedNodes().size()){
+                            continue;
+                        }
                         // j -> i -> i+1 -> j+1
                         int deltaCost1 = 0;
                         deltaCost1 = deltaCost1 - matrix.getDistance(solution.getVisitedNodes().get(j), solution.getVisitedNodes().get((j + 1) % solution.getVisitedNodes().size()))
@@ -859,59 +862,36 @@ public class Main {
         return moves;
     }
 
-    public static CandidatMove CanditatMoves(Solution solution, distance_matrix matrix, List<Integer> weights,int nbCandidatMoves){
+    public static CandidatMove CanditatMoves(distance_matrix matrix, List<Integer> weights,int nbCandidatMoves){
         //List of candidate moves
         CandidatMove candidatMove = new CandidatMove();
 
-        for(int i=0;i<solution.getVisitedNodes().size();i++) {
-            Integer[] bestNodesNotInSolution = new Integer[nbCandidatMoves];
-            Integer[] bestNodeCostNotInSolution = new Integer[nbCandidatMoves];
-            Integer[] bestNodesInSolution = new Integer[nbCandidatMoves];
-            Integer[] bestNodeCostInSolution = new Integer[nbCandidatMoves];
-
-            for (int j = 0; j < matrix.getMatrix().size(); j++) {
-                if (!solution.getVisitedNodes().contains(j)) {
+        for(int i=0;i<matrix.getMatrix().size();i++){
+            //Find the nearest edge to the node
+            Integer[] bestNodes = new Integer[nbCandidatMoves];
+            Integer[] bestNodeCost = new Integer[nbCandidatMoves];
+            for(int j=0;j<matrix.getMatrix().size();j++) {
+                if (i != j) {
                     for (int k = 0; k < nbCandidatMoves; k++) {
-                        if (bestNodeCostNotInSolution[k] == null || matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j) < bestNodeCostNotInSolution[k]) {
-                            bestNodeCostNotInSolution[k] = matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j);
-                            bestNodesNotInSolution[k] = j;
-                            break;
-                        }
-                    }
-                } else if (j != solution.getVisitedNodes().get(i) && j != solution.getVisitedNodes().get((i + 1) % solution.getVisitedNodes().size()) && j != solution.getVisitedNodes().get((i - 1 + solution.getVisitedNodes().size()) % solution.getVisitedNodes().size())) {
-                    for (int k = 0; k < nbCandidatMoves; k++) {
-                        if (bestNodeCostInSolution[k] == null || matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j) < bestNodeCostInSolution[k]) {
-                            bestNodeCostInSolution[k] = matrix.getDistance(solution.getVisitedNodes().get(i), j) + weights.get(j);
-                            bestNodesInSolution[k] = j;
+                        if (bestNodeCost[k] == null || matrix.getDistance(i, j) + weights.get(j) < bestNodeCost[k]) {
+                            //Shift the nodes
+                            for (int l = nbCandidatMoves - 1; l > k; l--) {
+                                bestNodeCost[l] = bestNodeCost[l - 1];
+                                bestNodes[l] = bestNodes[l - 1];
+                            }
+                            bestNodeCost[k] = matrix.getDistance(i, j) + weights.get(j);
+                            bestNodes[k] = j;
                             break;
                         }
                     }
                 }
-            }
-            //Merge the two tables of nodes into an Arraylist
-            ArrayList<Integer[]> bestNodes = new ArrayList<Integer[]>();
-            for (int k = 0; k < nbCandidatMoves; k++) {
-                bestNodes.add(new Integer[]{bestNodesNotInSolution[k], bestNodeCostNotInSolution[k]});
-                bestNodes.add(new Integer[]{bestNodesInSolution[k], bestNodeCostInSolution[k]});
-            }
-            //Sort the list of nodes by cost
-            Collections.sort(bestNodes, new Comparator<Integer[]>() {
-                @Override
-                public int compare(Integer[] o1, Integer[] o2) {
-                    return o1[1].compareTo(o2[1]);
-                }
-            });
-            //Only keep the nbCandidatMoves best nodes
-            for (int k = 0; k < nbCandidatMoves; k++) {
-                bestNodes.remove(bestNodes.size() - 1);
             }
             //Add the nodes to the list of candidate moves
             ArrayList<Integer> bestNodesArray = new ArrayList<Integer>();
-            for (int k = 0; k < nbCandidatMoves; k++) {
-                bestNodesArray.add(bestNodes.get(k)[0]);
+            for(int k=0;k<nbCandidatMoves;k++){
+                bestNodesArray.add(bestNodes[k]);
             }
-            candidatMove.addCandidatMove(i, bestNodesArray);
-
+            candidatMove.addCandidatMove(i,bestNodesArray);
         }
         return candidatMove;
     }
@@ -923,7 +903,7 @@ public class Main {
         //Copy the initial solution
         Solution bestSolution = new Solution(initialSolution.getCost(), initialSolution.getVisitedNodes());
         //Candidate moves
-        CandidatMove candidatMoves = CanditatMoves(bestSolution, matrix, weights,nbCandidatMoves);
+        CandidatMove candidatMoves = CanditatMoves(matrix, weights,nbCandidatMoves);
 
         //List of moves to all neighboring solutions
         ArrayList<Move> moves = new ArrayList<Move>();
@@ -956,7 +936,6 @@ public class Main {
                     newSolution.getVisitedNodes().add(bestMove.getI(), bestMove.getJ());
                 }
                 //Update the neighbors
-                candidatMoves = CanditatMoves(bestSolution, matrix, weights,nbCandidatMoves);
                 moves = EdgesExchangesCandidat(bestSolution, matrix, weights,candidatMoves);
                 moves2 = InterRouteExchangeCanditat(bestSolution, matrix, weights,candidatMoves);
                 moves.addAll(moves2);
