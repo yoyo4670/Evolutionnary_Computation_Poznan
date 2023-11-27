@@ -35,5 +35,10 @@ public class Solution {
         }
     }
 
-
+    public boolean isEdge(int node1, int node2){
+        return visitedNodes.contains(node1) && visitedNodes.contains(node2) && Math.abs(visitedNodes.indexOf(node1) - visitedNodes.indexOf(node2)) == 1;
+    }
+    public int getIndexOfNode(int node){
+        return visitedNodes.indexOf(node);
+    }
 }

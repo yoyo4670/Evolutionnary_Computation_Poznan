@@ -44,3 +44,4 @@ bin/
 /src/TSPC.csv
 /src/TSPD.csv
 /.idea/vcs.xml
+/PreviousSteepestLocalSearch.csv
